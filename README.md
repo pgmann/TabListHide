@@ -1,6 +1,6 @@
 ##TabListHide 
 
-Quick links · [Download Builds](https://ci.pgmann.cf/job/TabListHide/) · [JavaDoc](https://ci.pgmann.cf/job/TabListHide/javadoc) · [Maven Repo](https://mvn.pgmann.cf/) · [License](https://www.gnu.org/licenses/gpl-3.0.en.html)
+Quick links · [Download Latest Build](https://ci.pgmann.cf/job/TabListHide/lastSuccessfulBuild/artifact/target/TabListHide-1.0-SNAPSHOT.jar) · [Jenkins](https://ci.pgmann.cf/job/TabListHide/) · [JavaDoc](https://ci.pgmann.cf/job/TabListHide/javadoc) · [Maven Repo](https://mvn.pgmann.cf/) · [License](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 ### ~ How it works ~
 
@@ -18,8 +18,7 @@ Once players are hidden, they will remain hidden until either the server restart
 
 ### ~ License ~
 
-This project is licensed under the [GNU General Public License v3.0 (GPLv3)](https://www.gnu.org/licenses/gpl-3.0.en.html).  
-A summary of this licence is [available here](https://www.tldrlegal.com/l/gpl-3.0).
+This project is licensed under the [GNU General Public License v3.0 (GPLv3)](https://www.gnu.org/licenses/gpl-3.0.en.html). A summary of this licence is [available here](https://www.tldrlegal.com/l/gpl-3.0).
 
 ### ~ Obtaining a Build ~
 
