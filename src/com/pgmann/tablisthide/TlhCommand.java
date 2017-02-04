@@ -102,8 +102,7 @@ public class TlhCommand implements CommandExecutor {
 			sender.sendMessage(p.colourise(TabListHide.prefix + ChatColor.DARK_RED
 					+ "An error occured, see console for details. This is probably a bug, please report it!"));
 			e.printStackTrace();
-			return true; // An error message has been printed, so command was
-							// technically handled.
+			return true; // An error message has been printed, so command was technically handled.
 		}
 	}
 
@@ -160,8 +159,7 @@ public class TlhCommand implements CommandExecutor {
 				permission = "tablisthide.admin";
 				break;
 			default:
-				permission = "tablisthide"; // Should never happen. But, just in
-											// case...
+				permission = "tablisthide"; // Should never happen. But, just in case...
 				break;
 			}
 

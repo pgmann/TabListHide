@@ -26,12 +26,10 @@ public class TabListHide extends JavaPlugin {
 	TlhCommand commands;
 	static String rawPrefix = ChatColor.YELLOW + "TabListHide" + ChatColor.WHITE;
 	static String prefix = ChatColor.WHITE + "[" + rawPrefix + ChatColor.WHITE + "] ";
-	HidePlayerList hlp;
+	HidePlayerList hpl;
 
 	@Override
 	public void onEnable() {
-		//initAllPlayerLists();
-		
 		getServer().getConsoleSender().sendMessage(rawPrefix + " by " + ChatColor.YELLOW + "pgmann" + ChatColor.WHITE + " is enabled!");
 
 		// Register the command listener
@@ -43,8 +41,8 @@ public class TabListHide extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new TlhListener(this), this);
 		
 		// Register ProtocolLib packet listener
-		hlp = new HidePlayerList(this);
-		hlp.register();
+		hpl = new HidePlayerList(this);
+		hpl.register();
 	}
 
 	@Override
@@ -52,19 +50,22 @@ public class TabListHide extends JavaPlugin {
 		getServer().getConsoleSender().sendMessage(rawPrefix + " is now disabled.");
 	}
 
-	public String colourise(String rawText) {
+	protected String colourise(String rawText) {
 		return ChatColor.translateAlternateColorCodes('&', rawText);
 	}
 	
 	public boolean setPlayerVisible(Player player, boolean visible, boolean silent) {
 		boolean success;
 		
-		if(visible) success = hlp.showPlayer(player);
-		else success = hlp.hidePlayer(player);
+		if(visible) success = hpl.showPlayer(player);
+		else success = hpl.hidePlayer(player);
 		
 		if (!silent && success)
 			player.sendMessage(prefix + "You are now " + ChatColor.YELLOW + (visible ? "" : "in") + "visible"+ChatColor.WHITE+" on the tab list");
 		
 		return success;
+	}
+	public boolean isPlayerVisible(Player player) {
+		return hpl.isVisible(player);
 	}
 }

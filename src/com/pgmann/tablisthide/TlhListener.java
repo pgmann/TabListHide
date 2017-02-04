@@ -20,6 +20,7 @@ package com.pgmann.tablisthide;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class TlhListener implements Listener{
@@ -33,6 +34,13 @@ public class TlhListener implements Listener{
 	protected void onPlayerJoin(PlayerJoinEvent e) {
 		if(e.getPlayer().hasPermission("tablisthide.hide")) {
 			p.setPlayerVisible(e.getPlayer(), false, true);
+		}
+	}
+	
+	@EventHandler
+	protected void onPlayerGameModeChange(PlayerGameModeChangeEvent e) {
+		if(p.hpl.isVisible(e.getPlayer())) {
+			
 		}
 	}
 }

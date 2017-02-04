@@ -61,7 +61,7 @@ public class HidePlayerList {
 	 * 
 	 * @param plugin - owner plugin.
 	 */
-	public HidePlayerList(final TabListHide p) {
+	protected HidePlayerList(final TabListHide p) {
 		this.overrideListener = new PacketAdapter(p, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
@@ -103,7 +103,7 @@ public class HidePlayerList {
 	/**
 	 * Start the hook.
 	 */
-	public void register() {
+	protected void register() {
 		manager.addPacketListener(overrideListener);
 	}
 
@@ -113,7 +113,7 @@ public class HidePlayerList {
 	 * @param player - the player to hide from the list.
 	 * @return TRUE if the player was not previously hidden, FALSE otherwise.
 	 */
-	public boolean hidePlayer(Player player) {
+	protected boolean hidePlayer(Player player) {
 		String name = player.getPlayerListName();
 		boolean success = hiddenPlayers.add(name);
 
@@ -127,7 +127,7 @@ public class HidePlayerList {
 	 * @param player - the player to show on the list.
 	 * @return TRUE if the player was previously hidden, FALSE otherwise.
 	 */
-	public boolean showPlayer(Player player) {
+	protected boolean showPlayer(Player player) {
 		String name = player.getPlayerListName();
 		boolean success = hiddenPlayers.remove(name);
 
@@ -141,7 +141,7 @@ public class HidePlayerList {
 	 * @param player - the player to check.
 	 * @return TRUE if it is, FALSE otherwise.
 	 */
-	public boolean isVisible(Player player) {
+	protected boolean isVisible(Player player) {
 		return !hiddenPlayers.contains(player.getName());
 	}
 
@@ -152,7 +152,7 @@ public class HidePlayerList {
 	 * @return The ping value.
 	 * @throws IllegalAccessException Unable to read the ping value due to a security limitation.
 	 */
-	public int getPlayerPing(Player player) throws IllegalAccessException {
+	private int getPlayerPing(Player player) throws IllegalAccessException {
 		BukkitUnwrapper unwrapper = new BukkitUnwrapper();
 		Object entity = unwrapper.unwrapItem(player);
 
@@ -191,14 +191,14 @@ public class HidePlayerList {
 	 * 
 	 * @return String Set of hidden players' names
 	 */
-	public Set<String> getHiddenPlayers() {
+	protected Set<String> getHiddenPlayers() {
 		return Collections.unmodifiableSet(hiddenPlayers);
 	}
 
 	/**
 	 * Cleanup this player list hook.
 	 */
-	public void cleanupAll() {
+	protected void cleanupAll() {
 		if (overrideListener != null) {
 			manager.removePacketListener(overrideListener);
 			overrideListener = null;
