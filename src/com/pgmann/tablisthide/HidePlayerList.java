@@ -57,9 +57,9 @@ public class HidePlayerList {
 	private Field pingField;
 
 	/**
-	 * Start the player list hook.
+	 * Start the player list hook
 	 * 
-	 * @param plugin - owner plugin.
+	 * @param plugin the owner plugin
 	 */
 	protected HidePlayerList(final TabListHide p) {
 		this.overrideListener = new PacketAdapter(p, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
@@ -101,17 +101,17 @@ public class HidePlayerList {
 	}
 
 	/**
-	 * Start the hook.
+	 * Start the hook
 	 */
 	protected void register() {
 		manager.addPacketListener(overrideListener);
 	}
 
 	/**
-	 * Hide a player from the list.
+	 * Hide a player from the list
 	 * 
-	 * @param player - the player to hide from the list.
-	 * @return TRUE if the player was not previously hidden, FALSE otherwise.
+	 * @param player the player to hide from the list
+	 * @return if anything happened (ie. player was visible and is now hidden)
 	 */
 	protected boolean hidePlayer(Player player) {
 		String name = player.getPlayerListName();
@@ -122,10 +122,10 @@ public class HidePlayerList {
 	}
 
 	/**
-	 * Show a player on the list.
+	 * Show a player on the list
 	 * 
-	 * @param player - the player to show on the list.
-	 * @return TRUE if the player was previously hidden, FALSE otherwise.
+	 * @param player the player to show on the list
+	 * @return if anything happened (ie. player was hidden and is now visible)
 	 */
 	protected boolean showPlayer(Player player) {
 		String name = player.getPlayerListName();
@@ -138,18 +138,18 @@ public class HidePlayerList {
 	/**
 	 * Determine if a given player is visible in the player list.
 	 * 
-	 * @param player - the player to check.
-	 * @return TRUE if it is, FALSE otherwise.
+	 * @param player the player to check.
+	 * @return whether the player is visible
 	 */
 	protected boolean isVisible(Player player) {
 		return !hiddenPlayers.contains(player.getName());
 	}
 
 	/**
-	 * Retrieve the current ping value from a player.
+	 * Retrieve the current ping value of a player
 	 * 
-	 * @param player - player to retrieve.
-	 * @return The ping value.
+	 * @param player the player to retrieve
+	 * @return the ping value
 	 * @throws IllegalAccessException Unable to read the ping value due to a security limitation.
 	 */
 	private int getPlayerPing(Player player) throws IllegalAccessException {
@@ -164,9 +164,15 @@ public class HidePlayerList {
 		return (Integer) FieldUtils.readField(pingField, entity);
 	}
 
+	/**
+	 * Adds or removes a player from the player list
+	 * 
+	 * @param player the player affected
+	 * @param visible whether to show or hide the player
+	 */
 	private void sendInfoPacket(Player player, boolean visible) {
 		// BUILD
-		WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo();
+		WrappedPlayServerPlayerInfo packet = new WrappedPlayServerPlayerInfo();
 
 		// Packet Action
 		packet.setAction(visible ? PlayerInfoAction.ADD_PLAYER : PlayerInfoAction.REMOVE_PLAYER);
@@ -187,16 +193,16 @@ public class HidePlayerList {
 	}
 
 	/**
-	 * Retrieve every hidden player.
+	 * Retrieve all hidden players
 	 * 
-	 * @return String Set of hidden players' names
+	 * @return the hidden players' names
 	 */
 	protected Set<String> getHiddenPlayers() {
 		return Collections.unmodifiableSet(hiddenPlayers);
 	}
 
 	/**
-	 * Cleanup this player list hook.
+	 * Clean up this hook by removing the listener
 	 */
 	protected void cleanupAll() {
 		if (overrideListener != null) {

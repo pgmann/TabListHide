@@ -18,10 +18,17 @@
 
 package com.pgmann.tablisthide;
 
+import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * The main plugin class
+ * 
+ * @author pgmann
+ */
 public class TabListHide extends JavaPlugin {
 	TlhCommand commands;
 	static String rawPrefix = ChatColor.YELLOW + "TabListHide" + ChatColor.WHITE;
@@ -54,6 +61,14 @@ public class TabListHide extends JavaPlugin {
 		return ChatColor.translateAlternateColorCodes('&', rawText);
 	}
 	
+	/**
+	 * Change whether a player is visible in the tab list
+	 * 
+	 * @param player the player to affect
+	 * @param visible set the new state
+	 * @param silent whether to notify the target player
+	 * @return
+	 */
 	public boolean setPlayerVisible(Player player, boolean visible, boolean silent) {
 		boolean success;
 		
@@ -65,7 +80,21 @@ public class TabListHide extends JavaPlugin {
 		
 		return success;
 	}
+	
+	/**
+	 * Check if a player is visible in the tab list
+	 * @param player the player to check
+	 * @return the state of the supplied player
+	 */
 	public boolean isPlayerVisible(Player player) {
 		return hpl.isVisible(player);
+	}
+	
+	/**
+	 * Get all the names of hidden players
+	 * @return the hidden players' names
+	 */
+	public Set<String> getHiddenPlayers() {
+		return hpl.getHiddenPlayers();
 	}
 }

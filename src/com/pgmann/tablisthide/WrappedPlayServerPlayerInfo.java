@@ -26,15 +26,15 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 
-public class WrapperPlayServerPlayerInfo extends AbstractPacket {
+public class WrappedPlayServerPlayerInfo extends AbstractPacket {
 	public static final PacketType TYPE = PacketType.Play.Server.PLAYER_INFO;
 
-	public WrapperPlayServerPlayerInfo() {
+	public WrappedPlayServerPlayerInfo() {
 		super(new PacketContainer(TYPE), TYPE);
 		handle.getModifier().writeDefaults();
 	}
 
-	public WrapperPlayServerPlayerInfo(PacketContainer packet) {
+	public WrappedPlayServerPlayerInfo(PacketContainer packet) {
 		super(packet, TYPE);
 	}
 
