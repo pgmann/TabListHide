@@ -1,0 +1,23 @@
+name: TabListHide
+main: com.pgmann.tablisthide.TabListHide
+version: '1.0'
+description: "Hides a player with the permission from the tab list"
+author: pgmann
+depend: [ProtocolLib]
+commands:
+  tablisthide:
+    description: 'See [/tlh] for help'
+    usage: 'An error occurred while loading the plugin! Please report this bug.'
+    aliases: tlh
+permissions:
+  tablisthide.*:
+    description: Allows you to use all TabListHide commands.
+    children:
+      tablisthide.admin: true
+    default: false
+  tablisthide.admin:
+    description: Allows you to manually hide or show players in the tab list.
+    default: op
+  tablisthide.hide:
+    description: Automatically hides you from the tab list.
+    default: false
