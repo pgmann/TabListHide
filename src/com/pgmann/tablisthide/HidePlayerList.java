@@ -1,5 +1,5 @@
 /*
- * TabListHide - Hide or show players in the player list only (TAB).
+ * TabListHide - Hide or show players in the tab player list
  * Copyright (C) 2017 pgmann
  *
  * This program is free software: you can redistribute it and/or modify
