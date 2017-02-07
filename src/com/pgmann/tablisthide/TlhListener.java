@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class TlhListener implements Listener{
 	private TabListHide p;
@@ -33,14 +34,18 @@ public class TlhListener implements Listener{
 	@EventHandler
 	protected void onPlayerJoin(PlayerJoinEvent e) {
 		if(e.getPlayer().hasPermission("tablisthide.hide")) {
-			p.setPlayerVisible(e.getPlayer(), false, true);
+			TabListHide.setPlayerVisible(e.getPlayer(), false, false);
 		}
 	}
 	
-	@EventHandler
-	protected void onPlayerGameModeChange(PlayerGameModeChangeEvent e) {
-		if(p.hpl.isVisible(e.getPlayer())) {
-			
-		}
+	@EventHandler(ignoreCancelled=true)
+	protected void onPlayerGameModeChange(final PlayerGameModeChangeEvent e) {
+		// Run after the event has taken place to use new gamemode
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				TabListHide.getInternals().fixPlayer(e.getPlayer());
+			}
+		}.runTaskLater(p, 10);
 	}
 }

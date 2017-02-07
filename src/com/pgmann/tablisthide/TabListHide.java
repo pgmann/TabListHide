@@ -30,15 +30,19 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author pgmann
  */
 public class TabListHide extends JavaPlugin {
-	TlhCommand commands;
+	private TlhCommand commands;
 	static String rawPrefix = ChatColor.YELLOW + "TabListHide" + ChatColor.WHITE;
 	static String prefix = ChatColor.WHITE + "[" + rawPrefix + ChatColor.WHITE + "] ";
-	HidePlayerList hpl;
+	private HidePlayerList hpl;
+	private static TabListHide instance;
 
 	@Override
 	public void onEnable() {
 		getServer().getConsoleSender().sendMessage(rawPrefix + " by " + ChatColor.YELLOW + "pgmann" + ChatColor.WHITE + " is enabled!");
 
+		// Allow static API
+		instance = this;
+		
 		// Register the command listener
 		commands = new TlhCommand(this);
 		getCommand("tablisthide").setExecutor(commands);
@@ -61,6 +65,10 @@ public class TabListHide extends JavaPlugin {
 		return ChatColor.translateAlternateColorCodes('&', rawText);
 	}
 	
+	protected static HidePlayerList getInternals() {
+		return instance.hpl;
+	}
+	
 	/**
 	 * Change whether a player is visible in the tab list
 	 * 
@@ -69,11 +77,11 @@ public class TabListHide extends JavaPlugin {
 	 * @param silent whether to notify the target player
 	 * @return
 	 */
-	public boolean setPlayerVisible(Player player, boolean visible, boolean silent) {
+	public static boolean setPlayerVisible(Player player, boolean visible, boolean silent) {
 		boolean success;
 		
-		if(visible) success = hpl.showPlayer(player);
-		else success = hpl.hidePlayer(player);
+		if(visible) success = instance.hpl.showPlayer(player);
+		else success = instance.hpl.hidePlayer(player);
 		
 		if (!silent && success)
 			player.sendMessage(prefix + "You are now " + ChatColor.YELLOW + (visible ? "" : "in") + "visible"+ChatColor.WHITE+" on the tab list");
@@ -86,15 +94,15 @@ public class TabListHide extends JavaPlugin {
 	 * @param player the player to check
 	 * @return the state of the supplied player
 	 */
-	public boolean isPlayerVisible(Player player) {
-		return hpl.isVisible(player);
+	public static boolean isPlayerVisible(Player player) {
+		return instance.hpl.isVisible(player);
 	}
 	
 	/**
 	 * Get all the names of hidden players
 	 * @return the hidden players' names
 	 */
-	public Set<String> getHiddenPlayers() {
-		return hpl.getHiddenPlayers();
+	public static Set<String> getHiddenPlayers() {
+		return instance.hpl.getHiddenPlayers();
 	}
 }

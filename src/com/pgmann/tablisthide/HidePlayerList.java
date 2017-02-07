@@ -19,12 +19,14 @@
 package com.pgmann.tablisthide;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -52,6 +54,7 @@ public class HidePlayerList {
 
 	// Players to hide
 	private Set<String> hiddenPlayers = new HashSet<String>();
+	private Set<String> fixedPlayers = new HashSet<String>();
 
 	// To get the ping
 	private Field pingField;
@@ -67,7 +70,7 @@ public class HidePlayerList {
 			public void onPacketSending(PacketEvent event) {
 				// Only alter ADD_PLAYER actions
 				if (event.getPacket().getPlayerInfoAction().read(0) != PlayerInfoAction.ADD_PLAYER) return;
-				
+
 				// Get packet data
 				List<PlayerInfoData> playerInfoDataList = event.getPacket().getPlayerInfoDataLists().read(0);
 				PlayerInfoData playerInfoData = playerInfoDataList.get(0);
@@ -80,21 +83,25 @@ public class HidePlayerList {
 				// Check if the player needs hidden
 				String name = playerInfoData.getProfile().getName();
 				if (hiddenPlayers.contains(name)) {
-					// Must allow the player to spawn before removing from player list - hide display name initially instead
-					playerInfoDataList.set(0, new PlayerInfoData(playerInfoData.getProfile(), 1000, playerInfoData.getGameMode(), WrappedChatComponent.fromText("")));
-					
-					// Hide the player completely after a few ticks
 					final Player player = Bukkit.getPlayer(name);
+
+					// Ignore "fixed" players - those in spectator mode, who need to be shown in their own tab list
+					if(player.equals(event.getPlayer()) && fixedPlayers.contains(player.getName())) return;
+					
+					// Must allow the player to spawn before removing from player list - hide display name initially instead
+					playerInfoDataList.set(0, new PlayerInfoData(playerInfoData.getProfile(), getPlayerPing(player), playerInfoData.getGameMode(), WrappedChatComponent.fromText("")));
+
+					// Update packet
+					event.getPacket().getPlayerInfoDataLists().write(0, playerInfoDataList);
+					
+					// Hide the player completely after 10 ticks
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							sendInfoPacket(player, false);
+							hidePlayer(player);
 						}
 					}.runTaskLater(p, 10);
 				}
-
-				// Update packet
-				event.getPacket().getPlayerInfoDataLists().write(0, playerInfoDataList);
 			}
 		};
 		this.manager = ProtocolLibrary.getProtocolManager();
@@ -114,25 +121,66 @@ public class HidePlayerList {
 	 * @return if anything happened (ie. player was visible and is now hidden)
 	 */
 	protected boolean hidePlayer(Player player) {
-		String name = player.getPlayerListName();
+		// Send the packet to all players
+		final ArrayList<Player> targets = new ArrayList<Player>();
+		targets.addAll(Bukkit.getOnlinePlayers());
+
+		// The target must be in their own tab list or they can't no-clip/use spectator tools
+		if(player.getGameMode() == GameMode.SPECTATOR) targets.remove(player);
+
+		// Add to list of hidden players
+		String name = player.getName();
 		boolean success = hiddenPlayers.add(name);
 
-		sendInfoPacket(player, false);
+		// Send packet to targets
+		sendInfoPacket(player, false, targets);
 		return success;
 	}
 
 	/**
 	 * Show a player on the list
 	 * 
-	 * @param player the player to show on the list
+	 * @param player the player to show in the list
 	 * @return if anything happened (ie. player was hidden and is now visible)
 	 */
 	protected boolean showPlayer(Player player) {
-		String name = player.getPlayerListName();
+		String name = player.getName();
 		boolean success = hiddenPlayers.remove(name);
 
 		sendInfoPacket(player, true);
 		return success;
+	}
+
+	/**
+	 * Fixes a bug where Spectators (gamemode 3) can't no-clip or use tools.
+	 * - Visible players are ignored.
+	 * - Adds the player to their own tab list if they're spectator mode.
+	 * - If the player is not in spectator mode, they will be removed from the tab list.
+	 * 
+	 * @param player the player to fix
+	 */
+	protected void fixPlayer(Player player) {
+		// Ignore visible players
+		if(isVisible(player)) return;
+
+		// Packet will be sent to the target player only
+		ArrayList<Player> targets = new ArrayList<Player>();
+		targets.add(player);
+		
+		// Ignore the packet in the listener
+		fixedPlayers.add(player.getName());
+
+		// Show spectators in their own tab list
+		if(player.getGameMode() == GameMode.SPECTATOR) {
+			sendInfoPacket(player, true, targets);
+		}
+		// Hide all other players in all tab lists
+		else {
+			sendInfoPacket(player, false, targets);
+		}
+
+		// Unignore the packet in the listener again
+		fixedPlayers.remove(player.getName());
 	}
 
 	/**
@@ -150,9 +198,8 @@ public class HidePlayerList {
 	 * 
 	 * @param player the player to retrieve
 	 * @return the ping value
-	 * @throws IllegalAccessException Unable to read the ping value due to a security limitation.
 	 */
-	private int getPlayerPing(Player player) throws IllegalAccessException {
+	private int getPlayerPing(Player player) {
 		BukkitUnwrapper unwrapper = new BukkitUnwrapper();
 		Object entity = unwrapper.unwrapItem(player);
 
@@ -161,16 +208,32 @@ public class HidePlayerList {
 			pingField = FuzzyReflection.fromObject(entity).getFieldByName("ping");
 		}
 
-		return (Integer) FieldUtils.readField(pingField, entity);
+		try {
+			return (Integer) FieldUtils.readField(pingField, entity);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	/**
-	 * Adds or removes a player from the player list
+	 * Updates the player list for each client after a player has been hidden/shown
 	 * 
 	 * @param player the player affected
 	 * @param visible whether to show or hide the player
 	 */
 	private void sendInfoPacket(Player player, boolean visible) {
+		sendInfoPacket(player, visible, null);
+	}
+
+	/**
+	 * Updates the player list for each client after a player has been hidden/shown
+	 * 
+	 * @param player the player affected
+	 * @param visible whether to show or hide the player
+	 * @param targetOnly only send the packet to the target player
+	 */
+	private void sendInfoPacket(Player player, boolean visible, List<Player> targets) {
 		// BUILD
 		WrappedPlayServerPlayerInfo packet = new WrappedPlayServerPlayerInfo();
 
@@ -178,16 +241,12 @@ public class HidePlayerList {
 		packet.setAction(visible ? PlayerInfoAction.ADD_PLAYER : PlayerInfoAction.REMOVE_PLAYER);
 
 		// Packet Data
-		int ping = 0;
-		try {
-			ping = getPlayerPing(player);
-		} catch (IllegalAccessException e) {e.printStackTrace();}
 		List<PlayerInfoData> list = packet.getData();
-		list.add(new PlayerInfoData(WrappedGameProfile.fromPlayer(player), ping, NativeGameMode.fromBukkit(player.getGameMode()), WrappedChatComponent.fromText(player.getName())));
+		list.add(new PlayerInfoData(WrappedGameProfile.fromPlayer(player), getPlayerPing(player), NativeGameMode.fromBukkit(player.getGameMode()), WrappedChatComponent.fromText(player.getName())));
 		packet.setData(list);
 
-		// SEND
-		for(Player p : Bukkit.getOnlinePlayers()) {
+		// SEND to targets, or all online players
+		for(Player p : targets != null ? targets : Bukkit.getOnlinePlayers()) {
 			packet.sendPacket(p);
 		}
 	}

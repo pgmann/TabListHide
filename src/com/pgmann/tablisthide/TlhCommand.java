@@ -18,7 +18,6 @@
 
 package com.pgmann.tablisthide;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -220,12 +219,12 @@ public class TlhCommand implements CommandExecutor {
 		}
 		boolean silent = args.length > 2 && args[2].equalsIgnoreCase("true");
 
-		boolean success = p.setPlayerVisible(target, true, silent);
+		boolean success = TabListHide.setPlayerVisible(target, true, silent);
 		
 		if(sender != target) {
 			if(success) sender.sendMessage(TabListHide.prefix + ChatColor.YELLOW + target.getDisplayName() + ChatColor.WHITE + " is now visible in the tab list");
 			else sender.sendMessage(TabListHide.prefix + ChatColor.RED + target.getDisplayName() + ChatColor.DARK_RED + " is already visible!");
-		}
+		} else if(!success) sender.sendMessage(TabListHide.prefix + ChatColor.DARK_RED + "You are already visible!");
 	}
 
 	/**
@@ -257,11 +256,11 @@ public class TlhCommand implements CommandExecutor {
 		}
 		boolean silent = args.length > 2 && args[2].equalsIgnoreCase("true");
 
-		boolean success = p.setPlayerVisible(target, false, silent);
+		boolean success = TabListHide.setPlayerVisible(target, false, silent);
 		
 		if(sender != target) {
 			if(success) sender.sendMessage(TabListHide.prefix + ChatColor.YELLOW + target.getDisplayName() + ChatColor.WHITE + " is now hidden from the tab list");
 			else sender.sendMessage(TabListHide.prefix + ChatColor.RED + target.getDisplayName() + ChatColor.DARK_RED + " is already hidden!");
-		}
+		} else if(!success) sender.sendMessage(TabListHide.prefix + ChatColor.DARK_RED + "You are already hidden!");
 	}
 }

@@ -1,6 +1,6 @@
 ##TabListHide 
 
-Quick links · [Download Latest Build](https://ci.pgmann.cf/job/TabListHide/lastSuccessfulBuild/artifact/target/TabListHide-1.0-SNAPSHOT.jar) · [Jenkins](https://ci.pgmann.cf/job/TabListHide/) · [JavaDoc](https://ci.pgmann.cf/job/TabListHide/javadoc) · [Maven Repo](https://mvn.pgmann.cf/) · [License](https://www.gnu.org/licenses/gpl-3.0.en.html)
+Quick links · [Download Latest Build](https://ci.pgmann.cf/job/TabListHide/lastSuccessfulBuild/artifact/target/TabListHide-1.1-SNAPSHOT.jar) · [Jenkins](https://ci.pgmann.cf/job/TabListHide/) · [JavaDoc](https://ci.pgmann.cf/job/TabListHide/javadoc) · [Maven Repo](https://mvn.pgmann.cf/) · [License](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 ### ~ How it works ~
 
