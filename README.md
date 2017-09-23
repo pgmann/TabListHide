@@ -1,4 +1,4 @@
-##TabListHide 
+## TabListHide 
 
 Quick links · [Download Latest Build](https://ci.pgmann.cf/job/TabListHide/lastSuccessfulBuild/artifact/target/TabListHide-1.1-SNAPSHOT.jar) · [Jenkins](https://ci.pgmann.cf/job/TabListHide/) · [JavaDoc](https://ci.pgmann.cf/job/TabListHide/javadoc) · [Maven Repo](https://mvn.pgmann.cf/) · [License](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
@@ -7,11 +7,11 @@ Quick links · [Download Latest Build](https://ci.pgmann.cf/job/TabListHide/last
 TabListHide is a plugin for Bukkit. As the name suggests, it allows players to be hidden from the tab list.
 Once players are hidden, they will remain hidden until either the server restarts or the `/tlh show` command is executed.
 
-####Permissions:
+#### Permissions:
 - `tablisthide.hide`: Automatically hides the user from the tab list when they join
 - `tablisthide.admin`: Gives the user permission to use this plugin's commands
 
-####Commands:
+#### Commands:
 - `/tlh help`: Shows a list of all commands shown here
 - `/tlh hide [player] [silent]`: Hides the player (or the sender) from the tab list
 - `/tlh show [player] [silent]`: Shows the player (or the sender) in the tab list again
