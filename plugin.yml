@@ -1,6 +1,6 @@
 name: TabListHide
 main: com.pgmann.tablisthide.TabListHide
-api-veraion: 1.17
+api-version: 1.17
 version: '1.2'
 description: "Hides a player with the permission from the tab list"
 author: pgmann
